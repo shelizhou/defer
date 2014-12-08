@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>测试页面</title>
+</head>
+<body>
+	
+	<script src="defer.js"></script>
+
+	<script type="text/javascript">
+
+		var aa = Defer(function(dd){
+            setTimeout(function(){
+                dd.reject(3,4);
+		        // console.log(aa.state)
+                
+            },200)
+        }); //.promise()
+        // aa.reject(1,11);
+        // console.log(aa.state)
+        aa.done(function(a,b){
+
+            console.log("success:" + a,b)
+        }).fail(function(a,b){
+            console.log("fail:" + a , b);
+        });
+
+        setTimeout(function(){
+
+	        aa.done(function(a,b){
+	            console.log("------success:"+a,b)
+	        }).fail(function(a,b){
+	            console.log("------fail:" + a , b);
+	        });
+        },500)
+		
+	</script>
+</body>
+</html>
