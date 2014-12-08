@@ -12,15 +12,15 @@
 
 		var text = Defer(function(dd){
             setTimeout(function(){
-                dd.reject(3,4);
+                dd.resolve(3,4);
 		        // console.log(text.state)
 
             },200)
-        }); //.promise()
+        }); //.promise();
+
         // text.reject(1,11);
         // console.log(text.state)
         text.done(function(a,b){
-
             console.log("success:" + a,b)
         }).fail(function(a,b){
             console.log("fail:" + a , b);
