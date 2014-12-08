@@ -10,16 +10,16 @@
 
 	<script type="text/javascript">
 
-		var aa = Defer(function(dd){
+		var text = Defer(function(dd){
             setTimeout(function(){
                 dd.reject(3,4);
-		        // console.log(aa.state)
-                
+		        // console.log(text.state)
+
             },200)
         }); //.promise()
-        // aa.reject(1,11);
-        // console.log(aa.state)
-        aa.done(function(a,b){
+        // text.reject(1,11);
+        // console.log(text.state)
+        text.done(function(a,b){
 
             console.log("success:" + a,b)
         }).fail(function(a,b){
@@ -27,8 +27,7 @@
         });
 
         setTimeout(function(){
-
-	        aa.done(function(a,b){
+	        text.done(function(a,b){
 	            console.log("------success:"+a,b)
 	        }).fail(function(a,b){
 	            console.log("------fail:" + a , b);
