@@ -6,7 +6,9 @@
  * author: she
  */
 
-(function(undefined) {
+;(function(undefined) {
+    
+    "use strict";
 
     var defer = function(callback) {
 
@@ -107,10 +109,17 @@
     };
 
 
+
+    // 检测上下文环境是否为 AMD 或者 CMD   
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
             return defer;
         });
+
+    // 检查上下文是否为 node
+    } else if (typeof module !== 'undefined' && module.exports) {
+        module.exports = defer;
+        
     } else {
         window.Defer = defer;
     }
