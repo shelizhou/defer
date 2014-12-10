@@ -32,11 +32,11 @@
                 // 拒接
                 "rejected": "rejected"
             },
-            state = "notyet",
+            state = stateKey["notyet"],
 
             // 改变状态--接受
             resolve = function() {
-                if (state === "rejected") return;
+                if (state === stateKey["rejected"]) return;
 
                 var i = 0,
                     arg = argSu ? argSu : (argSu = arguments);
@@ -44,13 +44,12 @@
                     arrSu.pop().apply(null, arg);
                 }
 
-                state = "resolved";
-                result.state = stateKey[state];
+                state = stateKey["resolved"];
             },
 
             // 改变状态--拒绝
             reject = function() {
-                if (state === "resolved") return;
+                if (state === stateKey["resolved"]) return;
 
                 var i = 0,
                     arg = argFa ? argFa : (argFa = arguments);
@@ -59,8 +58,7 @@
                     arrFa.pop().apply(null, arg);
                 }
 
-                state = "rejected";
-                result.state = stateKey[state];
+                state = stateKey["rejected"];
             },
 
             // 抛出的
@@ -69,17 +67,16 @@
                 // 注册接受的函数
                 done: function(fn) {
                     arrSu.push(fn);
-                    if (state === "resolved") {
+                    if (state === stateKey["resolved"]) {
                         resolve();
                     }
                     return result;
-                }
+                },
 
                 // 注册拒绝的函数
-                ,
                 fail: function(fn) {
                     arrFa.push(fn);
-                    if (state === "rejected") {
+                    if (state === stateKey["rejected"]) {
                         reject();
                     }
 
@@ -87,14 +84,19 @@
                 },
                 resolve: resolve,
                 reject: reject,
-                state: stateKey["notyet"]
+                state: function(){
+                    return state;
+                },
 
                 // 不允许在外部改变状态
-                ,
+                
                 promise: function() {
                     return {
                         done: result.done,
-                        fail: result.fail
+                        fail: result.fail,
+                        state: function(){
+                            return state;
+                        }
                     }
                 }
             };
