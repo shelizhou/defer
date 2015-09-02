@@ -12,6 +12,12 @@
 
     var defer = function(callback) {
 
+        // 返回对象
+        if (!(this instanceof defer)) {
+            return new defer(callback);
+        }
+
+        
         var
             // 注册的success和fail函数集合
             arrSu = [],
@@ -20,6 +26,9 @@
             // resolve和reject的参数, 只有第一次传的时候会生效
             argSu,
             argFa,
+
+            // 步骤
+            arrStepFn = [],
 
             // 状态值
             stateKey = {
@@ -41,7 +50,7 @@
                 var i = 0,
                     arg = argSu ? argSu : (argSu = arguments);
                 for (; i < arrSu.length;) {
-                    arrSu.pop().apply(null, arg);
+                    arrSu.shift().apply(null, arg);
                 }
 
                 state = stateKey["resolved"];
@@ -55,10 +64,21 @@
                     arg = argFa ? argFa : (argFa = arguments);
 
                 for (; i < arrFa.length;) {
-                    arrFa.pop().apply(null, arg);
+                    arrFa.shift().apply(null, arg);
                 }
 
                 state = stateKey["rejected"];
+            },
+
+            // 步骤
+            progress = function(){
+                if (state !== stateKey["notyet"]) return;
+                var i = 0,
+                    arg = arguments;
+
+                for (; i < arrStepFn.length;i++) {
+                    arrStepFn[i].apply(null, arg);
+                }
             },
 
             // 抛出的
@@ -82,6 +102,13 @@
 
                     return result;
                 },
+                step: function(fn) {
+                    if (state === stateKey["notyet"]) {
+                        arrStepFn.push(fn);
+                    }
+                    return result;
+                },
+                progress: progress,
                 resolve: resolve,
                 reject: reject,
                 state: function(){
