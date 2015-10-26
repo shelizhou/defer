@@ -46,6 +46,7 @@
             // 改变状态--接受
             resolve = function() {
                 if (state === stateKey["rejected"]) return;
+                state = stateKey["resolved"];
 
                 var i = 0,
                     arg = argSu ? argSu : (argSu = arguments);
@@ -53,12 +54,12 @@
                     arrSu.shift().apply(null, arg);
                 }
 
-                state = stateKey["resolved"];
             },
 
             // 改变状态--拒绝
             reject = function() {
                 if (state === stateKey["resolved"]) return;
+                state = stateKey["rejected"];
 
                 var i = 0,
                     arg = argFa ? argFa : (argFa = arguments);
@@ -67,7 +68,6 @@
                     arrFa.shift().apply(null, arg);
                 }
 
-                state = stateKey["rejected"];
             },
 
             // 步骤

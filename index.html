@@ -13,27 +13,30 @@
     
 		var text = Defer(function(dd){
             setTimeout(function(){
+                // console.log(text.state())
+                
                 dd.resolve(3,4);
-		        console.log(text.state())
+                // dd.reject(3,4);
+		        // console.log(text.state())
 
             },200)
         }); //.promise();
 
         // text.reject(1,11);
-        console.log(text.state())
+        // console.log(text.state())
         text.done(function(a,b){
             console.log("success:" + a,b)
         }).fail(function(a,b){
             console.log("fail:" + a , b);
         });
 
-        setTimeout(function(){
-	        text.done(function(a,b){
-	            console.log("------success:"+a,b)
-	        }).fail(function(a,b){
-	            console.log("------fail:" + a , b);
-	        });
-        },500)
+        // setTimeout(function(){
+	       //  text.done(function(a,b){
+	       //      console.log("------success:"+a,b)
+	       //  }).fail(function(a,b){
+	       //      console.log("------fail:" + a , b);
+	       //  });
+        // },500)
 		
 	</script>
 </body>
