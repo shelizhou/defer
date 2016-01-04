@@ -7,7 +7,7 @@
  */
 
 ;(function(undefined) {
-    
+
     "use strict";
 
     var defer = function(callback) {
@@ -17,7 +17,7 @@
             return new defer(callback);
         }
 
-        
+
         var
             // 注册的success和fail函数集合
             arrSu = [],
@@ -33,7 +33,7 @@
             // 状态值
             stateKey = {
                 // 正准备
-                "notyet": "notyet", 
+                "notyet": "notyet",
 
                 // 接受
                 "resolved": "resolved",
@@ -90,7 +90,7 @@
                     if (state === stateKey["resolved"]) {
                         resolve();
                     }
-                    return result;
+                    return this;
                 },
 
                 // 注册拒绝的函数
@@ -100,13 +100,45 @@
                         reject();
                     }
 
-                    return result;
+                    return this;
                 },
+
+                // 注册done和fail 并返回新的defer
+                then: function(succfn, failfn){
+                    var n = new defer();
+                    if (succfn) {
+                        this.done(function(){
+                            var k = succfn.apply(null, arguments);
+                            if (k) {
+                                k.done(function(){
+                                    n.resolve.apply(null, arguments);
+                                }).fail(function(){
+                                    n.reject.apply(null, arguments);
+                                });
+                            }
+                        });
+                    }
+                    if (failfn) {
+                        this.fail(function(){
+                            var k = failfn.apply(null, arguments);
+                            if (k) {
+                                k.done(function(){
+                                    n.resolve.apply(null, arguments);
+                                }).fail(function(){
+                                    n.reject.apply(null, arguments);
+                                });
+                            }
+                        });
+                    }
+                    return n;
+                },
+
+                // 步骤
                 step: function(fn) {
                     if (state === stateKey["notyet"]) {
                         arrStepFn.push(fn);
                     }
-                    return result;
+                    return this;
                 },
                 progress: progress,
                 resolve: resolve,
@@ -116,14 +148,12 @@
                 },
 
                 // 不允许在外部改变状态
-                
                 promise: function() {
                     return {
                         done: result.done,
                         fail: result.fail,
-                        state: function(){
-                            return state;
-                        }
+                        then: result.then,
+                        state: result.state
                     }
                 }
             };
@@ -139,7 +169,7 @@
 
 
 
-    // 检测上下文环境是否为 AMD 或者 CMD   
+    // 检测上下文环境是否为 AMD 或者 CMD
     if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
             return defer;
@@ -148,7 +178,7 @@
     // 检查上下文是否为 node
     } else if (typeof module !== 'undefined' && module.exports) {
         module.exports = defer;
-        
+
     } else {
         window.Defer = defer;
     }

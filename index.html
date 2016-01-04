@@ -5,20 +5,16 @@
 	<title>测试页面</title>
 </head>
 <body>
-	
+
 	<script src="defer.js"></script>
 
 	<script type="text/javascript">
 
-    
-		var text = Defer(function(dd){
-            setTimeout(function(){
-                // console.log(text.state())
-                
-                dd.resolve(3,4);
-                // dd.reject(3,4);
-		        // console.log(text.state())
 
+		var text = new Defer(function(dd){
+            setTimeout(function(){
+				// console.log(text.state())
+                dd.resolve(3,4);
             },200)
         }); //.promise();
 
@@ -30,14 +26,38 @@
             console.log("fail:" + a , b);
         });
 
-        // setTimeout(function(){
-	       //  text.done(function(a,b){
-	       //      console.log("------success:"+a,b)
-	       //  }).fail(function(a,b){
-	       //      console.log("------fail:" + a , b);
-	       //  });
-        // },500)
+		var kk = text.then(function(a,b){
+				var n = new Defer();
+	        	console.log("1then:success:" + a,b)
+				n.resolve("xxx1", "xxx2");
+				return n;
+	    	}, function(a,b){
+				console.log("1then:fail:" + a, b);
+		}).then(function(x1,x2){
+			var n = new Defer();
+			console.log("2then:success:"+ x1,x1);
+			n.reject("yyy1", "yyy2");
+			return n;
+		});
+		var c = kk.then(function(y1,y2){
+			console.log("3then:success:"+ y1,y2);
+		},function(y1,y2){
+			console.log("3then:fail:"+ y1,y2);
+		});
 		
+		// text.resolve(3,4);
+
+        setTimeout(function(){
+	        text.done(function(a,b){
+	            console.log("------success:"+a,b)
+	        }).fail(function(a,b){
+	            console.log("------fail:" + a , b);
+	        });
+			kk.then(function(y1,y2){
+				console.log("------then:"+ y1,y2);
+			});
+        },500)
+
 	</script>
 </body>
 </html>
